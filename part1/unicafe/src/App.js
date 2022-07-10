@@ -13,9 +13,18 @@ const Section = ({title}) => <h1>{title}</h1>;
 const Result = ({text, result}) => <div>{text} {result}</div>
 
 const Statistics = ({good, neutral, bad}) => {
+  const section = <Section title={"statistics"} />;
+  if ((good + neutral + bad) === 0) {
+    return (
+      <div>
+        {section}
+        <div>No feedback given</div>
+      </div>
+    )
+  }
   return (
     <div>
-      <Section title={"statistics"} />
+      {section}
       <Result text={"good"} result={good} />
       <Result text={"neutral"} result={neutral} />
       <Result text={"bad"} result={bad} />
