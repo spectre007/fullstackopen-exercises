@@ -1,10 +1,21 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 const Button = (props) => {
   return (
     <button onClick={props.onClick}>
       {props.text}
     </button>
+  )
+}
+
+const Section = ({text}) => <h1>{text}</h1>;
+
+const Anecdote = (props) => {
+  return (
+    <div>
+      <div> {props.anecdote} </div>
+      <div> has {props.count} votes</div>
+    </div>
   )
 }
 
@@ -22,6 +33,8 @@ const App = () => {
   const [selected, setSelected] = useState(0);
   const [voteCount, setVoteCount] = useState(new Array(anecdotes.length).fill(0));
 
+  const maxVotesIndex = voteCount.indexOf(Math.max(...voteCount));
+
   const randomSelect = () => {
     const randomInt = Math.floor(Math.random() * anecdotes.length);
     setSelected(randomInt);
@@ -37,8 +50,11 @@ const App = () => {
 
   return (
     <div>
-      <div> {anecdotes[selected]} </div>
-      <div> has {voteCount[selected]} votes</div>
+      <Section text={"Anecdote of the day"} />
+      <Anecdote
+        anecdote={anecdotes[selected]}
+        count={voteCount[selected]}
+      />
       <Button
         text={"vote"}
         onClick={vote(selected)}
@@ -46,6 +62,12 @@ const App = () => {
       <Button
         text={"next anecdote"}
         onClick={randomSelect}
+      />
+
+      <Section text={"Anecdote with most votes"} />
+      <Anecdote
+        anecdote={anecdotes[maxVotesIndex]}
+        count={voteCount[maxVotesIndex]}
       />
     </div>
   )
