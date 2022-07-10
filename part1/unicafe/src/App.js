@@ -10,27 +10,24 @@ const Button = (props) => {
 
 const Section = ({title}) => <h1>{title}</h1>;
 
-const Result = ({text, result}) => <div>{text} {result}</div>
+const StatisticLine = ({text, value}) => <div>{text} {value}</div>
 
 const Statistics = ({good, neutral, bad}) => {
-  const section = <Section title={"statistics"} />;
   if ((good + neutral + bad) === 0) {
     return (
       <div>
-        {section}
         <div>No feedback given</div>
       </div>
     )
   }
   return (
     <div>
-      {section}
-      <Result text={"good"} result={good} />
-      <Result text={"neutral"} result={neutral} />
-      <Result text={"bad"} result={bad} />
-      <Result text={"all"} result={good + neutral + bad} />
-      <Result text={"average"} result={averageScore({good, neutral, bad})} />
-      <Result text={"positive"} result={percentagePositive({good, neutral, bad})} />
+      <StatisticLine text={"good"} value={good} />
+      <StatisticLine text={"neutral"} value={neutral} />
+      <StatisticLine text={"bad"} value={bad} />
+      <StatisticLine text={"all"} value={good + neutral + bad} />
+      <StatisticLine text={"average"} value={averageScore({good, neutral, bad})} />
+      <StatisticLine text={"positive"} value={percentagePositive({good, neutral, bad})} />
     </div>
   )
 }
@@ -67,6 +64,7 @@ const App = () => {
         text={"bad"}
       />
 
+      <Section title={"statistics"} />
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
