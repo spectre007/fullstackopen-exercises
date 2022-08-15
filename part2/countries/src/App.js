@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 
-const Country = ({data}) => {
+const CountryPage = ({data}) => {
   return (
     <div>
       <h2>{data.name.common}</h2>
@@ -16,10 +16,33 @@ const Country = ({data}) => {
   )
 }
 
-const Countries = ({data}) => {
+const Country = ({data, onClickFn}) => {
   return (
     <div>
-      {data.map((c) => <div key={c.name.common}>{c.name.common}</div>)}
+      {data.name.common}
+      <button onClick={onClickFn}> Show </button>
+    </div>
+  )
+}
+
+const Countries = ({data}) => {
+  const [clicked, setClicked] = useState(-1)
+  const onClickFn = (index) => {
+    return () => {setClicked(index)}
+  }
+  let toShow;
+  if (clicked >= 0) {
+    toShow = <CountryPage data={data[clicked]} />
+  } else {
+    toShow = data.map((c, ind) => {
+      return (
+        <Country key={c.name.common} data={c} onClickFn={onClickFn(ind)}/>
+      )
+    })
+ }
+  return (
+    <div>
+      { toShow }
     </div>
   )
 }
@@ -29,11 +52,11 @@ const FilterResult = ({filtered}) => {
   if (filtered.length === 0) {
     return
   } else if (filtered.length === 1) {
-    toShow = <Country data={filtered[0]} />
+    toShow = <CountryPage data={filtered[0]} />
   } else if (filtered.length > 10) {
     toShow = "Too many matches, specify another filter"
   } else {
-    toShow = <Countries data={filtered}/>
+    toShow = <Countries data={filtered} />
   }
   return (<div> {toShow} </div> )
 }
