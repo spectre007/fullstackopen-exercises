@@ -1,7 +1,39 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 
+const API_KEY = process.env.REACT_APP_API_KEY
+
+const WeatherInfo = ({location}) => {
+  const [weather, setWeather] = useState({})
+
+  const weatherHook = () => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`)
+      .then(response => {
+        setWeather(response.data)
+      })
+  }
+  useEffect(weatherHook, [])
+
+  if (Object.keys(weather).length === 0) { return (<div></div>) }
+  const imgUrl = `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
+  return (
+    <div>
+      <h3>Weather in {location.city}</h3>
+      <div>temperature {weather.main.temp} Celsius</div>
+      <img src={imgUrl} alt={weather.weather[0].description} />
+      <div>wind {weather.wind.speed} m/s</div>
+    </div>
+  )
+}
+
+
 const CountryPage = ({data}) => {
+  const loc = {
+    city: data.capital[0],
+    lat: data.capitalInfo.latlng[0],
+    lon: data.capitalInfo.latlng[1],
+  }
   return (
     <div>
       <h2>{data.name.common}</h2>
@@ -12,6 +44,7 @@ const CountryPage = ({data}) => {
         {Object.values(data.languages).map((v) => <li key={v}>{v}</li>)}
       </ul>
       <img src={data.flags.png} alt={data.name.common} width={150} />
+      <WeatherInfo location={loc} />
     </div>
   )
 }
