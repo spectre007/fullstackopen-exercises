@@ -1,7 +1,22 @@
 import personService from "./services/persons"
 import { useEffect, useState } from 'react'
 
-const Person = ({name, number}) => <div>{name} {number}</div>
+const Person = ({name, number, onDelete}) => {
+  const confirmedDelete = () => {
+    if(window.confirm(`Delete ${name} ?`)) {
+      onDelete()
+    }
+  }
+
+  return (
+    <div>
+      {name} {number}
+      <button onClick={confirmedDelete}>
+        delete
+      </button>
+    </div>
+  )
+}
 
 const Filter = ({value, onChange}) => {
   return (
@@ -27,10 +42,16 @@ const PersonForm = (props) => {
   )
 }
 
-const Persons = ({persons}) => {
+const Persons = ({persons, onDelete}) => {
   return (
     <div>
-      {persons.map((p) => <Person key={p.name} name={p.name} number={p.number} />)}
+      {persons.map((p) => <Person 
+          key={p.name}
+          name={p.name}
+          number={p.number}
+          onDelete={onDelete(p.id)}
+        />)
+      }
     </div>
   )
 }
@@ -68,6 +89,20 @@ const App = () => {
     setNewNumber("")
   }
 
+  const removePerson = (id) => {
+    return () => {
+      personService
+        .remove(id)
+        .then(() => setPersons(
+          persons.filter(p => p.id !== id)
+        ))
+        .catch(error => {
+          alert(`Person with id=${id} already removed.`)
+          console.log(error.message)
+        })
+    }
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -98,7 +133,10 @@ const App = () => {
         onChangeNumber={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={personsToShow} />
+      <Persons 
+        persons={personsToShow}
+        onDelete={removePerson}
+      />
     </div>
   )
 }
