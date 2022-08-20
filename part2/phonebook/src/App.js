@@ -1,5 +1,6 @@
 import personService from "./services/persons"
 import { useEffect, useState } from 'react'
+import "./index.css"
 
 const Person = ({name, number, onDelete}) => {
   const confirmedDelete = () => {
@@ -56,11 +57,22 @@ const Persons = ({persons, onDelete}) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if (message === null) { return null}
+
+  return (
+    <div className="status">
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
+  const [statusMessage, setStatusMessage] = useState(null)
 
   const hook = () => {
     personService
@@ -82,6 +94,10 @@ const App = () => {
       personService
         .create(newPerson)
         .then((returnedPerson) => setPersons(persons.concat(returnedPerson)))
+        .then(() => {
+          setStatusMessage(`Added ${newName}`)
+          setTimeout(() => setStatusMessage(null), 4500)
+        })
     } else {
       const confirmed = window.confirm(`${newName} is already added to phonebook, ` 
           + "replace the old number with a new one?")
@@ -92,6 +108,10 @@ const App = () => {
           .then((returnedPerson) => setPersons(
               persons.map(p => p.id !== existingPerson.id ? p : returnedPerson)
           ))
+          .then(() => {
+            setStatusMessage(`Changed number of ${newName}`)
+            setTimeout(() => setStatusMessage(null), 4500)
+          })
           .catch(error => alert(error))
       }
     }
@@ -135,6 +155,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={statusMessage} />
       <Filter value={personFilter} onChange={handleFilterChange} />
       <h3>Add a new</h3>
       <PersonForm
