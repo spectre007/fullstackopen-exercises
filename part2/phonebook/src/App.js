@@ -73,17 +73,27 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const names = persons.map(p => p.name)
-    if (!names.includes(newName)) {
-      const newPerson = {
+    const newPerson = {
         name: newName,
         number: newNumber
-      }
+    }
+    const names = persons.map(p => p.name)
+    if (!names.includes(newName)) {
       personService
         .create(newPerson)
         .then((returnedPerson) => setPersons(persons.concat(returnedPerson)))
     } else {
-      window.alert(`${newName} is already added to phonebook`)
+      const confirmed = window.confirm(`${newName} is already added to phonebook, ` 
+          + "replace the old number with a new one?")
+      const existingPerson = persons.find(p => p.name === newName)
+      if (existingPerson && confirmed) {
+        personService
+          .update(existingPerson.id, newPerson)
+          .then((returnedPerson) => setPersons(
+              persons.map(p => p.id !== existingPerson.id ? p : returnedPerson)
+          ))
+          .catch(error => alert(error))
+      }
     }
     setNewName("")
     setNewNumber("")
@@ -99,9 +109,11 @@ const App = () => {
         .catch(error => {
           alert(`Person with id=${id} already removed.`)
           console.log(error.message)
+          setPersons(persons.filter(p => p.id !== id))
         })
     }
   }
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
