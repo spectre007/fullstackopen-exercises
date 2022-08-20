@@ -57,12 +57,12 @@ const Persons = ({persons, onDelete}) => {
   )
 }
 
-const Notification = ({ message }) => {
-  if (message === null) { return null}
+const Notification = ({ payload }) => {
+  if (Object.keys(payload).length === 0) { return null}
 
   return (
-    <div className="status">
-      {message}
+    <div className={payload.type}>
+      {payload.message}
     </div>
   )
 }
@@ -72,7 +72,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
-  const [statusMessage, setStatusMessage] = useState(null)
+  const [statusMessage, setStatusMessage] = useState({})
 
   const hook = () => {
     personService
@@ -95,8 +95,8 @@ const App = () => {
         .create(newPerson)
         .then((returnedPerson) => setPersons(persons.concat(returnedPerson)))
         .then(() => {
-          setStatusMessage(`Added ${newName}`)
-          setTimeout(() => setStatusMessage(null), 4500)
+          setStatusMessage({mesage: `Added ${newName}`, type: "status"})
+          setTimeout(() => setStatusMessage({}), 4500)
         })
     } else {
       const confirmed = window.confirm(`${newName} is already added to phonebook, ` 
@@ -106,17 +106,23 @@ const App = () => {
         personService
           .update(existingPerson.id, newPerson)
           .then((returnedPerson) => setPersons(
-              persons.map(p => p.id !== existingPerson.id ? p : returnedPerson)
+            persons.map(p => p.id !== existingPerson.id ? p : returnedPerson)
           ))
           .then(() => {
-            setStatusMessage(`Changed number of ${newName}`)
-            setTimeout(() => setStatusMessage(null), 4500)
+            setStatusMessage({message: `Changed number of ${newName}`, type: "status"})
+            setTimeout(() => setStatusMessage({}), 4500)
           })
-          .catch(error => alert(error))
+          .catch(error => {
+            setStatusMessage({
+              message: `Information on ${newName} has already been removed from the server!`,
+              type: "error"
+            })
+            setTimeout(() => setStatusMessage({}), 4500)
+          })
       }
     }
-    setNewName("")
-    setNewNumber("")
+      setNewName("")
+      setNewNumber("")
   }
 
   const removePerson = (id) => {
@@ -127,8 +133,11 @@ const App = () => {
           persons.filter(p => p.id !== id)
         ))
         .catch(error => {
-          alert(`Person with id=${id} already removed.`)
-          console.log(error.message)
+          setStatusMessage({
+            message: `Information on ${newName} has already been removed from the server!`,
+            type: "error"
+          })
+          setTimeout(() => setStatusMessage({}), 4500)
           setPersons(persons.filter(p => p.id !== id))
         })
     }
@@ -155,7 +164,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={statusMessage} />
+      <Notification payload={statusMessage} />
       <Filter value={personFilter} onChange={handleFilterChange} />
       <h3>Add a new</h3>
       <PersonForm
