@@ -95,7 +95,7 @@ const App = () => {
         .create(newPerson)
         .then((returnedPerson) => setPersons(persons.concat(returnedPerson)))
         .then(() => {
-          setStatusMessage({mesage: `Added ${newName}`, type: "status"})
+          setStatusMessage({message: `Added ${newName}`, type: "status"})
           setTimeout(() => setStatusMessage({}), 4500)
         })
     } else {
