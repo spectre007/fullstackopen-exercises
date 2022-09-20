@@ -98,6 +98,11 @@ const App = () => {
           setStatusMessage({message: `Added ${newName}`, type: "status"})
           setTimeout(() => setStatusMessage({}), 4500)
         })
+        .catch(error => {
+            setStatusMessage({message: error.response.data.error, type: "error"})
+            setTimeout(() => setStatusMessage({}), 4500)
+            console.log(error.response.data.error)
+        })
     } else {
       const confirmed = window.confirm(`${newName} is already added to phonebook, ` 
           + "replace the old number with a new one?")
