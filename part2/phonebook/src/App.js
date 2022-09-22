@@ -1,71 +1,11 @@
 import React, { useEffect, useState } from "react"
+import Filter from "./components/Filter"
+import Notification from "./components/Notification"
+import PersonForm from "./components/PersonForm"
+import Persons from "./components/Persons"
 import "./index.css"
 import personService from "./services/persons"
 
-const Person = ({ name, number, onDelete }) => {
-  const confirmedDelete = () => {
-    if(window.confirm(`Delete ${name} ?`)) {
-      onDelete()
-    }
-  }
-
-  return (
-    <div>
-      {name} {number}
-      <button onClick={confirmedDelete}>
-        delete
-      </button>
-    </div>
-  )
-}
-
-const Filter = ({ value, onChange }) => {
-  return (
-    <div>
-      filter shown with <input value={value} onChange={onChange} />
-    </div>
-  )
-}
-
-const PersonForm = (props) => {
-  return (
-    <form onSubmit={props.onSubmit}>
-      <div>
-        name: <input value={props.name} onChange={props.onChangeName} />
-      </div>
-      <div>
-        number: <input value={props.number} onChange={props.onChangeNumber} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  )
-}
-
-const Persons = ({ persons, onDelete }) => {
-  return (
-    <div>
-      {persons.map((p) => <Person
-        key={p.name}
-        name={p.name}
-        number={p.number}
-        onDelete={onDelete(p.id)}
-      />)
-      }
-    </div>
-  )
-}
-
-const Notification = ({ payload }) => {
-  if (Object.keys(payload).length === 0) { return null}
-
-  return (
-    <div className={payload.type}>
-      {payload.message}
-    </div>
-  )
-}
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -74,14 +14,13 @@ const App = () => {
   const [personFilter, setPersonFilter] = useState("")
   const [statusMessage, setStatusMessage] = useState({})
 
-  const hook = () => {
+  useEffect( () => {
     personService
       .getAll()
       .then(initialList => {
         setPersons(initialList)
       })
-  }
-  useEffect(hook, [])
+  }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
