@@ -5,7 +5,6 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const blogsRouter = require('./controllers/blogs')
 
-// eslint-disable-next-line no-undef
 const mongoUrl = config.MONGODB_URI
 mongoose.connect(mongoUrl)
 
