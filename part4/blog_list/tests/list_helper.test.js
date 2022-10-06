@@ -107,7 +107,7 @@ describe('mostBlogs', () => {
     expect(Object.entries(result).length).toBe(0)
   })
 
-  test('when list has only one blog equals to that author and likes', () => {
+  test('when list has only one blog equals to that author and blogs', () => {
     const listWithOneBlog = [ BLOGS[0] ]
     const reference = {
       author: 'Michael Chan',
@@ -123,6 +123,32 @@ describe('mostBlogs', () => {
       blogs: 3,
     }
     const result = listHelper.mostBlogs(BLOGS)
+    expect(result).toEqual(reference)
+  })
+})
+
+describe('mostLikes', () => {
+  test('of an empty list is an empty object', () => {
+    const result = listHelper.mostLikes([])
+    expect(Object.entries(result).length).toBe(0)
+  })
+
+  test('when a list has only one blog equals to that author and likes', () => {
+    const listWithOneBlog = [ BLOGS[0] ]
+    const reference = {
+      author: 'Michael Chan',
+      likes: 7,
+    }
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual(reference)
+  })
+
+  test('of a bigger list is determined correctly', () => {
+    const result = listHelper.mostLikes(BLOGS)
+    const reference = {
+      author: 'Edsger W. Dijkstra',
+      likes: 17,
+    }
     expect(result).toEqual(reference)
   })
 })

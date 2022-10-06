@@ -21,6 +21,7 @@ const favoriteBlog = (blogs) => {
 
 const mostBlogs = (blogs) => {
   if (blogs.length === 0) return {}
+
   return _.chain(blogs)
     .countBy('author')
     .toPairs()
@@ -29,10 +30,31 @@ const mostBlogs = (blogs) => {
     .value()
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return {}
+
+  const iteratee = (result, curr) => {
+    if (!_.has(result, curr.author)) {
+      result[curr.author] = curr.likes
+    } else {
+      result[curr.author] += curr.likes
+    }
+    return result
+  }
+
+  return _.chain(blogs)
+    .reduce(iteratee, {})
+    .toPairs()
+    .map(([k, v]) => ({ author: k, likes: v }))
+    .maxBy('likes')
+    .value()
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
 
