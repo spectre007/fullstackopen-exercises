@@ -83,13 +83,46 @@ describe('favoriteBlog', () => {
     expect(Object.entries(result).length).toBe(0)
   })
 
+  test('when list has only one blog equals the only blog', () => {
+    const listWithOneBlog = [ BLOGS[0] ]
+    const reference = (({ title, author, likes }) => ({ title, author, likes }))(listWithOneBlog[0])
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    expect(result).toEqual(reference)
+  })
+
   test('of a bigger list is determined correctly', () => {
     const result = listHelper.favoriteBlog(BLOGS)
     const reference = {
-      title: "Canonical string reduction",
-      author: "Edsger W. Dijkstra",
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
       likes: 12
     }
+    expect(result).toEqual(reference)
+  })
+})
+
+describe('mostBlogs', () => {
+  test('of an empty list is an empty object', () => {
+    const result = listHelper.mostBlogs([])
+    expect(Object.entries(result).length).toBe(0)
+  })
+
+  test('when list has only one blog equals to that author and likes', () => {
+    const listWithOneBlog = [ BLOGS[0] ]
+    const reference = {
+      author: 'Michael Chan',
+      blogs: 1,
+    }
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual(reference)
+  })
+
+  test('of a bigger list is determined correctly', () => {
+    const reference = {
+      author: 'Robert C. Martin',
+      blogs: 3,
+    }
+    const result = listHelper.mostBlogs(BLOGS)
     expect(result).toEqual(reference)
   })
 })
