@@ -35,6 +35,27 @@ test('unique identifier property "id" is defined', async () => {
   })
 })
 
+test('a new blog can be added', async () => {
+  const newBlog = {
+    title: 'A Blog Title',
+    author: 'A. Nonymous',
+    url: 'https://example.com',
+    likes: 1,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAfterInsert = await helper.blogsInDb()
+  expect(blogsAfterInsert).toHaveLength(helper.initialBlogs.length + 1)
+
+  const blogTitles = blogsAfterInsert.map((b) => b.title)
+  expect(blogTitles).toContain(newBlog.title)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
