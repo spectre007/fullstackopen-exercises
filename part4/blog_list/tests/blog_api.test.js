@@ -56,6 +56,23 @@ test('a new blog can be added', async () => {
   expect(blogTitles).toContain(newBlog.title)
 })
 
+test('missing likes are defaulted to zero', async () => {
+  const newBlog = {
+    title: 'A Blog with zero likes',
+    author: 'Z. Row',
+    url: 'localhost'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+
+  const blogsAfterInsert = await helper.blogsInDb()
+  const insertedBlog = blogsAfterInsert.find((b) => b.title === newBlog.title)
+  expect(insertedBlog.likes).toBe(0)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
