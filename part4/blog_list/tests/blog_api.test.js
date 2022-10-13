@@ -8,101 +8,140 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  console.log('cleared entries in blog test database')
-
-  const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
+  await Blog.insertMany(helper.initialBlogs)
 })
 
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
-
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
-})
-
-test('unique identifier property "id" is defined', async () => {
-  const response = await api.get('/api/blogs')
-  response.body.forEach(blog => {
-    expect(blog.id).toBeDefined()
+describe('when fetching all blogs', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+  
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
+  
+  test('unique identifier property "id" is defined', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog => {
+      expect(blog.id).toBeDefined()
+    })
   })
 })
 
-test('a new blog can be added', async () => {
-  const newBlog = {
-    title: 'A Blog Title',
-    author: 'A. Nonymous',
-    url: 'https://example.com',
-    likes: 1,
-  }
+describe('viewing a specific blog', () => {
+  test('succeeds with valid id', async () => {
+    const blogsBeforeGet = await helper.blogsInDb()
+    const blogToView = blogsBeforeGet[0]
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    const returnedBlog = await api
+      .get(`/api/blogs/${blogToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-  const blogsAfterInsert = await helper.blogsInDb()
-  expect(blogsAfterInsert).toHaveLength(helper.initialBlogs.length + 1)
+    const processedBlog = JSON.parse(JSON.stringify(blogToView))
+    expect(returnedBlog.body).toEqual(processedBlog)
+  })
 
-  const blogTitles = blogsAfterInsert.map((b) => b.title)
-  expect(blogTitles).toContain(newBlog.title)
+  test('fails with statuscode 404 if note does not exist', async () => {
+    const nonExistingId = await helper.nonExistingId()
+
+    await api
+      .get(`/api/blogs/${nonExistingId}`)
+      .expect(404)
+  })
 })
 
-test('missing likes are defaulted to zero', async () => {
-  const newBlog = {
-    title: 'A Blog with zero likes',
-    author: 'Z. Row',
-    url: 'localhost'
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-
-  const blogsAfterInsert = await helper.blogsInDb()
-  const insertedBlog = blogsAfterInsert.find((b) => b.title === newBlog.title)
-  expect(insertedBlog.likes).toBe(0)
+describe('addition of a new blog', () => {
+  test('succeeds with valid data', async () => {
+    const newBlog = {
+      title: 'A Blog Title',
+      author: 'A. Nonymous',
+      url: 'https://example.com',
+      likes: 1,
+    }
+  
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+  
+    const blogsAfterInsert = await helper.blogsInDb()
+    expect(blogsAfterInsert).toHaveLength(helper.initialBlogs.length + 1)
+  
+    const blogTitles = blogsAfterInsert.map((b) => b.title)
+    expect(blogTitles).toContain(newBlog.title)
+  })
+  
+  test('automatically sets missing likes to zero', async () => {
+    const newBlog = {
+      title: 'A Blog with zero likes',
+      author: 'Z. Row',
+      url: 'localhost'
+    }
+  
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+  
+    const blogsAfterInsert = await helper.blogsInDb()
+    const insertedBlog = blogsAfterInsert.find((b) => b.title === newBlog.title)
+    expect(insertedBlog.likes).toBe(0)
+  })
+  
+  test('fails for a blog without title', async () => {
+    const blogWithoutTitle = {
+      author: 'Dr. No',
+      url: 'localhost:3000/blog',
+      likes: 2,
+    }
+  
+    await api
+      .post('/api/blogs')
+      .send(blogWithoutTitle)
+      .expect(400)
+  
+    const blogsAfterPost = await helper.blogsInDb()
+    expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
+  })
+  
+  test('fails for a blog without url', async () => {
+    const blogWithoutURL = {
+      title: 'Who needs URLs anyway?',
+      author: 'Dr. No',
+      likes: 0,
+    }
+  
+    await api
+      .post('/api/blogs')
+      .send(blogWithoutURL)
+      .expect(400)
+  
+    const blogsAfterPost = await helper.blogsInDb()
+    expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
+  })
 })
 
-test('a blog without title is not added', async () => {
-  const blogWithoutTitle = {
-    author: 'Dr. No',
-    url: 'localhost:3000/blog',
-    likes: 2,
-  }
+describe('deletion of a blog', () => {
+  test('succeeds if id is valid', async () => {
+    const blogsBeforeDelete = await helper.blogsInDb()
+    const blogToDelete = blogsBeforeDelete[0]
 
-  await api
-    .post('/api/blogs')
-    .send(blogWithoutTitle)
-    .expect(400)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
 
-  const blogsAfterPost = await helper.blogsInDb()
-  expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
-})
-
-test('a blog without url is not added', async () => {
-  const blogWithoutURL = {
-    title: 'Who needs URLs anyway?',
-    author: 'Dr. No',
-    likes: 0,
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(blogWithoutURL)
-    .expect(400)
-
-  const blogsAfterPost = await helper.blogsInDb()
-  expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
+    const blogsAfterDelete = await helper.blogsInDb()
+    expect(blogsAfterDelete).toHaveLength(helper.initialBlogs.length - 1)
+    const allTitles = blogsAfterDelete.map((b) => b.title)
+    expect(allTitles).not.toContain(blogToDelete.title)
+  })
 })
 
 afterAll(() => {
