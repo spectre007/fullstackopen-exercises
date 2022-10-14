@@ -128,6 +128,21 @@ describe('addition of a new blog', () => {
   })
 })
 
+describe('updating a blog', () => {
+  test('with a new number of likes succeeds', async () => {
+    const blogsBeforeUpdate = await helper.blogsInDb()
+    const blogToUpdate = blogsBeforeUpdate[0]
+    const newLikes = { likes: 77 }
+
+    const updatedBlog = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(newLikes)
+      .expect(200)
+
+    expect(updatedBlog.body).toEqual({ ...blogToUpdate, ...newLikes })
+  })
+})
+
 describe('deletion of a blog', () => {
   test('succeeds if id is valid', async () => {
     const blogsBeforeDelete = await helper.blogsInDb()
