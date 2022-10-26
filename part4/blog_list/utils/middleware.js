@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const logger = require('./logger')
 
 const errorHandler = (error, request, response, next) => {

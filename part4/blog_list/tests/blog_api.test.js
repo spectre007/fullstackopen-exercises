@@ -19,12 +19,12 @@ describe('when fetching all blogs', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
   })
-  
+
   test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
-  
+
   test('unique identifier property "id" is defined', async () => {
     const response = await api.get('/api/blogs')
     response.body.forEach(blog => {
@@ -64,65 +64,65 @@ describe('addition of a new blog', () => {
       url: 'https://example.com',
       likes: 1,
     }
-  
+
     await api
       .post('/api/blogs')
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
-  
+
     const blogsAfterInsert = await helper.blogsInDb()
     expect(blogsAfterInsert).toHaveLength(helper.initialBlogs.length + 1)
-  
+
     const blogTitles = blogsAfterInsert.map((b) => b.title)
     expect(blogTitles).toContain(newBlog.title)
   })
-  
+
   test('automatically sets missing likes to zero', async () => {
     const newBlog = {
       title: 'A Blog with zero likes',
       author: 'Z. Row',
       url: 'localhost'
     }
-  
+
     await api
       .post('/api/blogs')
       .send(newBlog)
       .expect(201)
-  
+
     const blogsAfterInsert = await helper.blogsInDb()
     const insertedBlog = blogsAfterInsert.find((b) => b.title === newBlog.title)
     expect(insertedBlog.likes).toBe(0)
   })
-  
+
   test('fails for a blog without title', async () => {
     const blogWithoutTitle = {
       author: 'Dr. No',
       url: 'localhost:3000/blog',
       likes: 2,
     }
-  
+
     await api
       .post('/api/blogs')
       .send(blogWithoutTitle)
       .expect(400)
-  
+
     const blogsAfterPost = await helper.blogsInDb()
     expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
   })
-  
+
   test('fails for a blog without url', async () => {
     const blogWithoutURL = {
       title: 'Who needs URLs anyway?',
       author: 'Dr. No',
       likes: 0,
     }
-  
+
     await api
       .post('/api/blogs')
       .send(blogWithoutURL)
       .expect(400)
-  
+
     const blogsAfterPost = await helper.blogsInDb()
     expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
   })

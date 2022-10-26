@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
@@ -31,7 +30,7 @@ describe('when there is initially one user in db', () => {
       .send(newUser)
       .expect(201)
       .expect('Content-Type', /application\/json/)
-    
+
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
@@ -41,7 +40,7 @@ describe('when there is initially one user in db', () => {
 
   test('creation fails if username is not unique', async () => {
     const usersAtStart = await helper.usersInDb()
-    
+
     const newUser = {
       username: 'root',
       password: 'superGeheim',
@@ -62,13 +61,13 @@ describe('when there is initially one user in db', () => {
 
   test('creation fails if username is not given', async () => {
     const usersAtStart = await helper.usersInDb()
-    
+
     const newUser = {
       password: 'superDuperGeheim',
       name: 'Wurzel',
     }
 
-    const result = await api
+    await api
       .post('/api/users')
       .send(newUser)
       .expect(400)
@@ -80,13 +79,13 @@ describe('when there is initially one user in db', () => {
 
   test('creation fails if password is not given', async () => {
     const usersAtStart = await helper.usersInDb()
-    
+
     const newUser = {
       username: 'mplanck',
       name: 'Max Planck',
     }
 
-    const result = await api
+    await api
       .post('/api/users')
       .send(newUser)
       .expect(400)
@@ -98,7 +97,7 @@ describe('when there is initially one user in db', () => {
 
   test('creation fails if password is shorter than three characters', async () => {
     const usersAtStart = await helper.usersInDb()
-    
+
     const newUser = {
       password: '12',
       username: 'mplanck',
@@ -110,7 +109,7 @@ describe('when there is initially one user in db', () => {
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/)
-    
+
     expect(result.body.error).toContain('must be at least three characters long')
 
     const usersAtEnd = await helper.usersInDb()
