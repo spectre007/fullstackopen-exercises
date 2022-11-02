@@ -9,6 +9,18 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
+const tokenExtractor = (request, response, next) => {
+  const pattern = /^(bearer|Bearer)\s+([A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*)$/
+  const authorization = request.get('authorization')
+  
+  if (authorization && pattern.test(authorization)) {
+    request.token = authorization.match(pattern)[2]
+  }
+
+  next()
+}
+
 module.exports = {
   errorHandler,
+  tokenExtractor,
 }
