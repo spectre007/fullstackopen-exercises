@@ -9,11 +9,7 @@ const api = supertest(app)
 describe('login for user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
-
-    const passwordHash = await bcrypt.hash('geheim', 10)
-    const user = new User({ username: 'root', passwordHash })
-
-    await user.save()
+    await helper.createUser({ username: 'root', password: 'geheim' })
   })
 
   test('succeeds with correct password and returns token', async () => {

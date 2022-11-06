@@ -1,14 +1,30 @@
-const mongoose = require('mongoose')
 const supertest = require('supertest')
+const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
 
+const DUMMY_USER = { username: 'blogger', password: '1234' }
+let token = ''
+
+beforeAll(async () => {
+  await User.deleteMany({})
+  await helper.createUser(DUMMY_USER)
+
+  const loginResponse = await api
+    .post('/api/login')
+    .send(DUMMY_USER)
+  token = loginResponse.body.token
+})
+
 beforeEach(async () => {
+  const dummyUser = await User.findOne({ username: DUMMY_USER.username })
+  const blogs = helper.initialBlogs.map((b) => ({ ...b, user: dummyUser._id }))
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await Blog.insertMany(blogs)
 })
 
 
@@ -47,7 +63,7 @@ describe('viewing a specific blog', () => {
     expect(returnedBlog.body).toEqual(processedBlog)
   })
 
-  test('fails with statuscode 404 if note does not exist', async () => {
+  test('fails with statuscode 404 if blog does not exist', async () => {
     const nonExistingId = await helper.nonExistingId()
 
     await api
@@ -67,6 +83,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -87,6 +104,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(newBlog)
       .expect(201)
 
@@ -104,6 +122,7 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(blogWithoutTitle)
       .expect(400)
 
@@ -120,8 +139,26 @@ describe('addition of a new blog', () => {
 
     await api
       .post('/api/blogs')
+      .auth(token, { type: 'bearer' })
       .send(blogWithoutURL)
       .expect(400)
+
+    const blogsAfterPost = await helper.blogsInDb()
+    expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('fails with status code 401 if token is not provided', async () => {
+    const newBlog = {
+      title: 'A Blog Title',
+      author: 'A. Nonymous',
+      url: 'https://example.com',
+      likes: 1,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
 
     const blogsAfterPost = await helper.blogsInDb()
     expect(blogsAfterPost).toHaveLength(helper.initialBlogs.length)
@@ -132,6 +169,7 @@ describe('updating a blog', () => {
   test('with a new number of likes succeeds', async () => {
     const blogsBeforeUpdate = await helper.blogsInDb()
     const blogToUpdate = blogsBeforeUpdate[0]
+    blogToUpdate.user = blogToUpdate.user.toString()
     const newLikes = { likes: 77 }
 
     const updatedBlog = await api
@@ -150,12 +188,36 @@ describe('deletion of a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .auth(token, { type: 'bearer' })
       .expect(204)
 
     const blogsAfterDelete = await helper.blogsInDb()
     expect(blogsAfterDelete).toHaveLength(helper.initialBlogs.length - 1)
     const allTitles = blogsAfterDelete.map((b) => b.title)
     expect(allTitles).not.toContain(blogToDelete.title)
+  })
+
+  test('fails if request by user different from creator', async () => {
+    // create other user
+    const otherUser = { username: 'käyttäjä', password: 'salasana' }
+    await helper.createUser(otherUser)
+    const loginResponse = await api
+      .post('/api/login')
+      .send(otherUser)
+    const otherToken = loginResponse.body.token
+
+    const blogsBeforeDelete = await helper.blogsInDb()
+    const blogToDelete = blogsBeforeDelete[0]
+
+    const result = await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .auth(otherToken, { type: 'bearer' })
+      .expect(401)
+    
+    expect(result.body.error).toContain('unauthorized user')
+
+    const blogsAfterDelete = await helper.blogsInDb()
+    expect(blogsAfterDelete).toHaveLength(helper.initialBlogs.length)
   })
 })
 
