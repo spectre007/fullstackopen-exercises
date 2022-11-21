@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import { LoginForm } from './components/LoginForm'
+import { NewBlogForm } from './components/NewBlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -30,6 +31,7 @@ const App = () => {
     try {
       const user = await loginService.login(credentials)
       setUser(user)
+      blogService.setToken(user.token)
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       setCredentials({username: '', password: ''})
     } catch (exception) {
@@ -62,6 +64,9 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <p>{user.name} logged in<button type='button' onClick={handleLogout}>logout</button></p>
+      
+      <h2>create new</h2>
+      <NewBlogForm onSubmit={blogService.create} />
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
