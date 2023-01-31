@@ -4,7 +4,7 @@ const baseUrl = '/api/blogs'
 let token = null
 
 const setToken = (newToken) => {
-  token = `bearer ${newToken}`
+  token = `Bearer ${newToken}`
 }
 
 const getAll = () => {
@@ -21,4 +21,5 @@ const create = async (newBlog) => {
   return response.data
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, create, setToken }
