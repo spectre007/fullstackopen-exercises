@@ -62,11 +62,6 @@ const App = () => {
     } catch (error) {
       console.log(error.name)
       console.log(error.message)
-      /*setStatusMessage({
-          text: `${error.name}: ${error.message}`,
-          type: 'error',
-      })
-      setTimeout(() => setStatusMessage(null), 5000)*/
     }
   }
 
