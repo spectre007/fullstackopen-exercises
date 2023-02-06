@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Blog from './components/Blog'
 import { LoginForm } from './components/LoginForm'
 import { Notification } from './components/Notification'
+import { Togglable } from './components/Togglable'
 import './index.css'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -12,6 +13,7 @@ const App = () => {
   const [credentials, setCredentials] = useState({username: '', password: ''})
   const [user, setUser] = useState(null)
   const [statusMessage, setStatusMessage] = useState(null)
+  const formRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -54,6 +56,7 @@ const App = () => {
       const response = await blogService.create(newBlog)
       setBlogs(blogs.concat(response))
       setNewBlog({author: '', title: '', url: ''})
+      formRef.current.toggleVisibility()
       setStatusMessage({
           text: `a new blog ${response.title} by ${response.author} added`,
           type: 'info',
@@ -85,6 +88,7 @@ const App = () => {
       <Notification  status={statusMessage} />
       <p>{user.name} logged in<button type='button' onClick={handleLogout}>logout</button></p>
       
+      <Togglable buttonLabel={'new blog'} ref={formRef}>
       <h2>create new</h2>
       <form onSubmit={handleCreate}>
       <div>
@@ -116,6 +120,7 @@ const App = () => {
       </div>
       <button type='submit'>create</button>
     </form>
+    </Togglable>
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
