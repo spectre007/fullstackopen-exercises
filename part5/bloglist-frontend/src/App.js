@@ -69,7 +69,6 @@ const App = () => {
   const updateBlog = async (updatedBlog) => {
     try {
       await blogService.update(updatedBlog)
-      setBlogs(blogs.filter((b) => b.id !== updatedBlog.id).concat(updatedBlog))
     } catch (error) {
       console.log(error.name)
       console.log(error.message)
