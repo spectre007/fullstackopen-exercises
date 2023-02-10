@@ -174,6 +174,7 @@ describe('updating a blog', () => {
 
     const updatedBlog = await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .auth(token, { type: 'bearer' })
       .send(newLikes)
       .expect(200)
 
