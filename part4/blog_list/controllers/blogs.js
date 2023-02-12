@@ -38,8 +38,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-  const { author, title, url, likes } = request.body
-  const user = request.body
+  const { author, title, url, likes, user } = request.body
   const blog = { author, title, url, likes, user: user.id }
   Object.keys(blog).forEach(key => blog[key] === undefined && delete blog[key])
 
