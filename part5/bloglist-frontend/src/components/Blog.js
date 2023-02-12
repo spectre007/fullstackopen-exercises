@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types'
 import { useState } from 'react'
 
-const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
+export const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
   const [visible, setVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -48,4 +49,15 @@ const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
   )
 }
 
-export default Blog
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    title: PropTypes.string,
+    author: PropTypes.string,
+    url: PropTypes.string,
+    likes: PropTypes.number,
+    user: PropTypes.object,
+  }).isRequired,
+  updateBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+  ownedByUser: PropTypes.bool.isRequired,
+}

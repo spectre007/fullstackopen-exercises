@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 
-export const LoginForm = ({credentials, setCredentials, onLogin}) => {
+export const LoginForm = ({ credentials, setCredentials, onLogin }) => {
   return (
     <form onSubmit={onLogin}>
       <div>
@@ -28,4 +29,13 @@ export const LoginForm = ({credentials, setCredentials, onLogin}) => {
       <button type="submit">login</button>
     </form>
   )
+}
+
+LoginForm.propTypes = {
+  credentials: PropTypes.shape({
+    username: PropTypes.string,
+    password: PropTypes.string,
+  }).isRequired,
+  setCredentials: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired,
 }

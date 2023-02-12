@@ -1,5 +1,5 @@
+import PropTypes from 'prop-types'
 import React from 'react'
-
 
 export const Notification = ({ status }) => {
   const text = status && status.text
@@ -7,8 +7,14 @@ export const Notification = ({ status }) => {
 
   return (
     <div className={status.type}>
-    {text}
+      {text}
     </div>
   )
 }
 
+Notification.propTypes = {
+  status: PropTypes.shape({
+    text: PropTypes.string,
+    type: PropTypes.string,
+  })
+}

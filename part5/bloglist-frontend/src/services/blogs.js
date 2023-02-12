@@ -25,7 +25,7 @@ const update = async (updatedBlog) => {
   const config = {
     headers: { Authorization: token }
   }
-  
+
   const blogUrl = [baseUrl, updatedBlog.id].join('/')
   const response = await axios.put(blogUrl, updatedBlog, config)
   return response.data
@@ -41,5 +41,4 @@ const remove = async (blog) => {
   return response
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, create, setToken, update, remove }

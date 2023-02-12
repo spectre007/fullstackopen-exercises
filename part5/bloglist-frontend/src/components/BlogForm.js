@@ -1,12 +1,13 @@
-import { useState } from "react"
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 
 export const BlogForm = ({ onSubmit }) => {
-  const [blog, setBlog] = useState({author: '', title: '', url: ''})
+  const [blog, setBlog] = useState({ author: '', title: '', url: '' })
 
   const handleCreate = (event) => {
     event.preventDefault()
     onSubmit(blog)
-    setBlog({author: '', title: '', url: ''})
+    setBlog({ author: '', title: '', url: '' })
   }
 
   return (
@@ -44,4 +45,8 @@ export const BlogForm = ({ onSubmit }) => {
       </form>
     </div>
   )
+}
+
+BlogForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
 }

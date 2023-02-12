@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import Blog from './components/Blog'
+import { Blog } from './components/Blog'
 import { BlogForm } from './components/BlogForm'
 import { LoginForm } from './components/LoginForm'
 import { Notification } from './components/Notification'
@@ -10,7 +10,7 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [credentials, setCredentials] = useState({username: '', password: ''})
+  const [credentials, setCredentials] = useState({ username: '', password: '' })
   const [user, setUser] = useState(null)
   const [statusMessage, setStatusMessage] = useState(null)
   const formRef = useRef()
@@ -18,7 +18,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [blogs.length])
 
   useEffect(() => {
@@ -37,9 +37,9 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
-      setCredentials({username: '', password: ''})
+      setCredentials({ username: '', password: '' })
     } catch (error) {
-      setStatusMessage({text: 'wrong username or password', type: 'error' })
+      setStatusMessage({ text: 'wrong username or password', type: 'error' })
       setTimeout(() => setStatusMessage(null), 5000)
     }
   }
@@ -57,8 +57,8 @@ const App = () => {
       setBlogs(blogs.concat(response))
       formRef.current.toggleVisibility()
       setStatusMessage({
-          text: `a new blog ${response.title} by ${response.author} added`,
-          type: 'info',
+        text: `a new blog ${response.title} by ${response.author} added`,
+        type: 'info',
       })
       setTimeout(() => setStatusMessage(null), 5000)
     } catch (error) {
@@ -114,18 +114,18 @@ const App = () => {
       <h2>blogs</h2>
       <Notification  status={statusMessage} />
       <p>{user.name} logged in<button type='button' onClick={handleLogout}>logout</button></p>
-      
+
       <Togglable buttonLabel={'new blog'} ref={formRef}>
         <BlogForm onSubmit={addBlog} />
       </Togglable>
 
       {blogs.sort(compareLikes).map(blog =>
         <Blog
-        key={blog.id}
-        blog={blog}
-        updateBlog={updateBlog}
-        deleteBlog={deleteBlog}
-        ownedByUser={blog.user?.username === user.username}
+          key={blog.id}
+          blog={blog}
+          updateBlog={updateBlog}
+          deleteBlog={deleteBlog}
+          ownedByUser={blog.user?.username === user.username}
         />
       )}
     </div>
