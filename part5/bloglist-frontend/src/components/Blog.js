@@ -27,13 +27,13 @@ export const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <div>
         {blog.title} {blog.author} &nbsp;
         <button style={hideWhenVisible} onClick={toggleVisibility}>view</button>
         <button style={showWhenVisible} onClick={toggleVisibility}>hide</button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="togglableContent">
         <div>{blog.url}</div>
         <div>
           {likes}
