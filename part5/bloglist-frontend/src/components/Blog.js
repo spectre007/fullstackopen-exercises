@@ -30,12 +30,12 @@ export const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
     <div style={blogStyle} className="blog">
       <div>
         {blog.title} {blog.author} &nbsp;
-        <button style={hideWhenVisible} onClick={toggleVisibility}>view</button>
-        <button style={showWhenVisible} onClick={toggleVisibility}>hide</button>
+        <button style={hideWhenVisible} onClick={toggleVisibility} id="btn-view">view</button>
+        <button style={showWhenVisible} onClick={toggleVisibility} id="btn-hide">hide</button>
       </div>
       <div style={showWhenVisible} className="togglableContent">
-        <div>{blog.url}</div>
-        <div>
+        <div id='url'>{blog.url}</div>
+        <div id='likes'>
           {likes}
           <button onClick={addLike}>like</button>
         </div>
@@ -57,7 +57,12 @@ Blog.propTypes = {
     likes: PropTypes.number,
     user: PropTypes.object,
   }).isRequired,
-  updateBlog: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
+  updateBlog: PropTypes.func,
+  deleteBlog: PropTypes.func,
   ownedByUser: PropTypes.bool.isRequired,
+}
+
+Blog.defaultProps = {
+  updateBlog: () => {},
+  deleteBlog: () => {},
 }
