@@ -21,6 +21,7 @@ export const BlogForm = ({ onSubmit }) => {
             value={blog.title}
             name='title'
             onChange={({ target }) => setBlog({ ...blog, title: target.value })}
+            placeholder='add title...'
           />
         </div>
         <div>
@@ -30,6 +31,7 @@ export const BlogForm = ({ onSubmit }) => {
             value={blog.author}
             name='author'
             onChange={({ target }) => setBlog({ ...blog, author: target.value })}
+            placeholder='add author...'
           />
         </div>
         <div>
@@ -39,6 +41,7 @@ export const BlogForm = ({ onSubmit }) => {
             value={blog.url}
             name='url'
             onChange={({ target }) => setBlog({ ...blog, url: target.value })}
+            placeholder='add url...'
           />
         </div>
         <button type='submit'>create</button>
