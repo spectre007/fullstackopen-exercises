@@ -37,7 +37,7 @@ export const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
         <div id='url'>{blog.url}</div>
         <div id='likes'>
           {likes}
-          <button onClick={addLike}>like</button>
+          <button onClick={addLike} id="btn-like">like</button>
         </div>
         <div>{blog.user?.name}</div>
         <button

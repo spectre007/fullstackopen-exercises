@@ -41,4 +41,21 @@ describe('<Blog />', () => {
     const extraContent = container.querySelector('.blog .togglableContent')
     expect(extraContent).not.toHaveStyle({ display: 'none' })
   })
+
+  test('addLike event handler is called when like button is clicked', async () => {
+    const mockUpdate = jest.fn()
+    const container = render(
+      <Blog blog={content} ownedByUser={false} updateBlog={mockUpdate}/>
+    ).container
+
+    const user = userEvent.setup()
+    const expandButton = container.querySelector('.blog #btn-view')
+    await user.click(expandButton)
+
+    const likeButton = container.querySelector('.blog #btn-like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(mockUpdate.mock.calls).toHaveLength(2)
+  })
 })
