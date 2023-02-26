@@ -59,5 +59,26 @@ describe('Blog app', function() {
         .contains('I <3 Cypress')
         .contains('view')
     })
+
+    describe('and a blog exists', function() {
+      beforeEach(function() {
+        cy.createBlog({
+          author: 'The Gang of Four',
+          title: 'Design Patterns',
+          url: 'https://www.example.com',
+        })
+      })
+
+      it.only('a user can like a blog', function() {
+        cy.get('.blog')
+          .contains('The Gang of Four')
+          .contains('view')
+          .click()
+        cy.get('.blog').contains('The Gang of Four').parent().as('theBlog')
+        cy.get('@theBlog').find('.togglableContent .likes').contains('0')
+        cy.get('@theBlog').find('.togglableContent .btn-like').click()
+        cy.get('@theBlog').find('.togglableContent .likes').contains('1')
+      })
+    })
   })
 })

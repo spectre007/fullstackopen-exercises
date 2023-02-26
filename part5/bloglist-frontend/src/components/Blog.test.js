@@ -30,12 +30,12 @@ describe('<Blog />', () => {
     ).container
 
     const user = userEvent.setup()
-    const expandButton = container.querySelector('.blog #btn-view')
+    const expandButton = container.querySelector('.blog .btn-view')
     await user.click(expandButton)
 
     const urlElement = screen.getByText(`${content.url}`)
     expect(urlElement).toBeDefined()
-    const likesElement = container.querySelector('.blog #likes')
+    const likesElement = container.querySelector('.blog .likes')
     expect(likesElement).toBeDefined()
 
     const extraContent = container.querySelector('.blog .togglableContent')
@@ -49,10 +49,10 @@ describe('<Blog />', () => {
     ).container
 
     const user = userEvent.setup()
-    const expandButton = container.querySelector('.blog #btn-view')
+    const expandButton = container.querySelector('.blog .btn-view')
     await user.click(expandButton)
 
-    const likeButton = container.querySelector('.blog #btn-like')
+    const likeButton = container.querySelector('.blog .btn-like')
     await user.click(likeButton)
     await user.click(likeButton)
 

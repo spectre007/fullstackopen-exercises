@@ -30,14 +30,14 @@ export const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
     <div style={blogStyle} className="blog">
       <div>
         {blog.title} {blog.author} &nbsp;
-        <button style={hideWhenVisible} onClick={toggleVisibility} id="btn-view">view</button>
-        <button style={showWhenVisible} onClick={toggleVisibility} id="btn-hide">hide</button>
+        <button style={hideWhenVisible} onClick={toggleVisibility} className="btn-view">view</button>
+        <button style={showWhenVisible} onClick={toggleVisibility} className="btn-hide">hide</button>
       </div>
       <div style={showWhenVisible} className="togglableContent">
-        <div id='url'>{blog.url}</div>
-        <div id='likes'>
+        <div className='url'>{blog.url}</div>
+        <div className='likes'>
           {likes}
-          <button onClick={addLike} id="btn-like">like</button>
+          <button onClick={addLike} className="btn-like">like</button>
         </div>
         <div>{blog.user?.name}</div>
         <button
