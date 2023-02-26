@@ -37,4 +37,27 @@ describe('Blog app', function() {
       cy.contains('Rumpertus logged in').should('not.exist')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'rumppi', password: 'let-me-in' })
+    })
+
+    it('A blog can be created', function() {
+      cy.get('button').contains('new blog').click()
+      cy.get('input[placeholder="add title..."]').type('I <3 Cypress')
+      cy.get('input[placeholder="add author..."]').type('A. Nonymous')
+      cy.get('input[placeholder="add url..."]').type('http://localhost:3000')
+      cy.get('button').contains('create').click()
+
+      cy.get('.info')
+        .should('contain', 'a new blog')
+        .and('contain', 'I <3 Cypress')
+        .and('contain', 'A. Nonymous')
+
+      cy.get('.blog')
+        .contains('I <3 Cypress')
+        .contains('view')
+    })
+  })
 })
