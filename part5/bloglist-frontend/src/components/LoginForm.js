@@ -7,6 +7,7 @@ export const LoginForm = ({ credentials, setCredentials, onLogin }) => {
       <div>
         username
         <input
+          id='username'
           type='text'
           value={credentials.username}
           name='Username'
@@ -18,6 +19,7 @@ export const LoginForm = ({ credentials, setCredentials, onLogin }) => {
       <div>
         password
         <input
+          id='password'
           type='password'
           value={credentials.password}
           name='Password'
@@ -26,7 +28,9 @@ export const LoginForm = ({ credentials, setCredentials, onLogin }) => {
           }}
         />
       </div>
-      <button type="submit">login</button>
+      <button id='login-button' type="submit">
+        login
+      </button>
     </form>
   )
 }
