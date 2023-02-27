@@ -30,8 +30,8 @@ export const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
     <div style={blogStyle} className="blog">
       <div>
         {blog.title} {blog.author} &nbsp;
-        <button style={hideWhenVisible} onClick={toggleVisibility} className="btn-view">view</button>
-        <button style={showWhenVisible} onClick={toggleVisibility} className="btn-hide">hide</button>
+        <button style={hideWhenVisible} onClick={toggleVisibility} className='btn-view'>view</button>
+        <button style={showWhenVisible} onClick={toggleVisibility} className='btn-hide'>hide</button>
       </div>
       <div style={showWhenVisible} className="togglableContent">
         <div className='url'>{blog.url}</div>
@@ -41,6 +41,7 @@ export const Blog = ({ blog, updateBlog, deleteBlog, ownedByUser }) => {
         </div>
         <div>{blog.user?.name}</div>
         <button
+          className='btn-delete'
           style={{ display: ownedByUser ? '' : 'none' }}
           onClick={() => deleteBlog(blog)}
         >remove</button>

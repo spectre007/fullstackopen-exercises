@@ -69,7 +69,7 @@ describe('Blog app', function() {
         })
       })
 
-      it.only('a user can like a blog', function() {
+      it('a user can like a blog', function() {
         cy.get('.blog')
           .contains('The Gang of Four')
           .contains('view')
@@ -78,6 +78,16 @@ describe('Blog app', function() {
         cy.get('@theBlog').find('.togglableContent .likes').contains('0')
         cy.get('@theBlog').find('.togglableContent .btn-like').click()
         cy.get('@theBlog').find('.togglableContent .likes').contains('1')
+      })
+
+      it('a user can delete a blog', function() {
+        cy.get('.blog')
+          .contains('The Gang of Four')
+          .parent()
+          .find('.btn-view')
+          .click()
+        cy.contains('The Gang of Four').parent().find('.btn-delete').click()
+        cy.contains('The Gang of Four').should('not.exist')
       })
     })
   })
