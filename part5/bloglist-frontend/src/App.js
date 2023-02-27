@@ -92,7 +92,7 @@ const App = () => {
     if (a.likes === b.likes) {
       return 0
     }
-    return Math.sign(a.likes - b.likes)
+    return Math.sign(b.likes - a.likes)
   }
 
   if (user === null) {

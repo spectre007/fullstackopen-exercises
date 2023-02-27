@@ -108,5 +108,33 @@ describe('Blog app', function() {
           .should('not.be.visible')
       })
     })
+
+    describe('and multiple blogs exists', function() {
+      const blogs = [{
+        author: 'A. I. Virtanen',
+        title: 'How to conserve fodder',
+        url: 'https://www.example.com',
+        likes: 151,
+      },{
+        author: 'Linus Torvalds',
+        title: 'Using Rust for the Linux Kernel',
+        url: 'https://www.example.com',
+        likes: 111,
+      },{
+        author: 'D. Deutsch, R. Jozsa',
+        title: 'Faster Quantum Algorithms',
+        url: 'https://www.example.com',
+        likes: 181,
+      }]
+      beforeEach(function() {
+        blogs.forEach((blog) => cy.createBlog(blog))
+      })
+
+      it.only('blogs are ordered by the number of likes (highest first)', function() {
+        cy.get('.blog').eq(0).should('contain', 'D. Deutsch, R. Jozsa')
+        cy.get('.blog').eq(1).should('contain', 'A. I. Virtanen')
+        cy.get('.blog').eq(2).should('contain', 'Linus Torvalds')
+      })
+    })
   })
 })
