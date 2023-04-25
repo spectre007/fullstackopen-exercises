@@ -27,11 +27,15 @@ const reducer = (state = initialState, action) => {
       const anecdoteToChange = state.find((a) => a.id === action.payload)
       const changedAnecdote = { ...anecdoteToChange, votes: anecdoteToChange.votes + 1 }
       return state.filter((a) => a.id !== action.payload).concat(changedAnecdote)
+    case 'NEW_ANECDOTE':
+      return [...state, action.payload]  
     default:
       return state
   }
 }
 
 export const doVote = (id) => ({ type: 'VOTE', payload: id })
+
+export const addAnecdote = (anecdote) => ({ type: 'NEW_ANECDOTE', payload: asObject(anecdote) })
 
 export default reducer
