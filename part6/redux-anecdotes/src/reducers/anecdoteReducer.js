@@ -9,6 +9,8 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
+const compareByVotes = (a, b) => a.votes - b.votes
+
 const asObject = (anecdote) => {
   return {
     content: anecdote,
@@ -26,9 +28,9 @@ const reducer = (state = initialState, action) => {
     case 'VOTE':
       const anecdoteToChange = state.find((a) => a.id === action.payload)
       const changedAnecdote = { ...anecdoteToChange, votes: anecdoteToChange.votes + 1 }
-      return state.filter((a) => a.id !== action.payload).concat(changedAnecdote)
+      return state.filter((a) => a.id !== action.payload).concat(changedAnecdote).sort(compareByVotes)
     case 'NEW_ANECDOTE':
-      return [...state, action.payload]  
+      return [...state, action.payload].sort(compareByVotes)
     default:
       return state
   }
