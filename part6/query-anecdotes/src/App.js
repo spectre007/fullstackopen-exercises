@@ -5,7 +5,10 @@ import Notification from './components/Notification'
 import { getAnecdotes } from './requests'
 
 const App = () => {
-  const result = useQuery("anecdotes", getAnecdotes, { retry: 1 })
+  const result = useQuery("anecdotes", getAnecdotes, {
+    retry: 1,
+    refetchOnWindowFocus: false,
+  })
 
   if (result.isLoading) {
     return <div>loading data</div>
