@@ -9,6 +9,10 @@ const AnecdoteForm = () => {
       const anecdotes = queryClient.getQueryData('anecdotes')
       queryClient.setQueryData('anecdotes', anecdotes.concat(newAnecdote))
     },
+    onError: () => {
+      messageDispatch({ type: 'SHORT_ANECDOTE'})
+      setTimeout(() => messageDispatch({ type: 'HIDE_MESSAGE' }), 5000)
+    }
   })
   const messageDispatch = useMessageDispatch()
 

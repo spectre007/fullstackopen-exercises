@@ -10,6 +10,9 @@ function messageReducer(state, action) {
 
     case 'HIDE_MESSAGE':
       return ''
+
+    case 'SHORT_ANECDOTE':
+      return 'too short anecdote, must have length 5 or more'
   
     default:
       return state
