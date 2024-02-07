@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const useField = (type) => {
   const [value, setValue] = useState('')
@@ -18,10 +18,18 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  useEffect(() => {
+    const response = axios
+      .get(baseUrl)
+      .then((response) => {
+        setResources(response.data)
+      })
+  }, [])
 
-  const create = (resource) => {
-    // ...
+  const create = async (resource) => {
+    const response = await axios.post(baseUrl, resource)
+    setResources([...resources, resource])
+    return response.data
   }
 
   const service = {
